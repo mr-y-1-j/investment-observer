@@ -2,10 +2,8 @@ name: Daily Investment News Observer
 
 on:
   schedule:
-    # 毎日 日本時間 朝7:00 に実行
-    # GitHubはUTC(世界標準時)なので、日本時間-9時間 = 22:00
+    # 毎日 日本時間 朝7:00 (UTC 22:00)
     - cron: '0 22 * * *'
-  # 手動でボタンを押して実行することも可能にする設定
   workflow_dispatch:
 
 jobs:
@@ -13,26 +11,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. リポジトリのコードを取ってくる
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # 2. Python環境を作る
+    # ★修正1：Pythonを新しいバージョンに変更
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.9'
+        python-version: '3.11'
 
-    # 3. 必要なライブラリをインストール
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
 
-    # 4. Pythonスクリプトを実行
     - name: Run Observer Script
       env:
-        # ここでSecretsを環境変数としてPythonに渡す
+        # ★修正2：ここにGROQの鍵を追加
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
         DATABASE_ID: ${{ secrets.DATABASE_ID }}
+        GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       run: python main.py
