@@ -14,7 +14,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # ★修正1：Pythonを新しいバージョンに変更
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
@@ -26,9 +25,10 @@ jobs:
 
     - name: Run Observer Script
       env:
-        # ★修正2：ここにGROQの鍵を追加
+        # ⬇️ ここにDiscordの行を追加しました
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
         DATABASE_ID: ${{ secrets.DATABASE_ID }}
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
       run: python main.py
