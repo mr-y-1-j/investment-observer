@@ -1,0 +1,38 @@
+name: Daily Investment News Observer
+
+on:
+  schedule:
+    # 毎日 日本時間 朝7:00 に実行
+    # GitHubはUTC(世界標準時)なので、日本時間-9時間 = 22:00
+    - cron: '0 22 * * *'
+  # 手動でボタンを押して実行することも可能にする設定
+  workflow_dispatch:
+
+jobs:
+  run-analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. リポジトリのコードを取ってくる
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # 2. Python環境を作る
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    # 3. 必要なライブラリをインストール
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    # 4. Pythonスクリプトを実行
+    - name: Run Observer Script
+      env:
+        # ここでSecretsを環境変数としてPythonに渡す
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+        DATABASE_ID: ${{ secrets.DATABASE_ID }}
+      run: python main.py
